@@ -1,0 +1,78 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../src/my-icons.html">
+    
+<dom-module id="anonymous-login">
+  <!-- Optional shadow DOM template -->
+  <template>
+    <style>
+      /* CSS rules for your element */
+    </style>
+
+    <!-- shadow DOM for your element -->
+
+   	<firebase-app
+  		auth-domain="vigio-prices.firebaseapp.com"
+  		database-url="https://vigio-prices.firebaseio.com"
+  		api-key="AIzaSyD6iGMqgnr0O6s7JtBBjRBfuAF6ynfbWIU"
+  		storage-bucket="vigio-prices.appspot.com"
+  		project-id="vigio-prices"
+  		messaging-sender-id="397613272675"
+  		name="prices-app"
+  		app="{{fbapp}}">
+	</firebase-app>
+
+	<firebase-auth 
+        app-name="prices-app"
+        id="auth" 
+        user="{{user}}" 
+        signed-in="{{signed}}"
+        status-known="{{statusKnown}}"
+        app="{{fbapp}}">
+    </firebase-auth>
+
+    <paper-icon-button icon="my-icons:account-circle" on-tap="login" hidden$="{{signed}}"></paper-icon-button>  
+    <paper-icon-button icon="my-icons:exit-to-app" on-tap="logout" hidden$="{{!signed}}"></paper-icon-button> 
+
+  </template>
+
+  <script>
+
+    // Define the element's API using an ES2015 class
+    class AnonymousLogin extends Polymer.Element {
+
+      static get is() { return 'anonymous-login'; }
+
+      // Declare properties for the element's public API         
+      static get properties() {
+        return {
+         
+        }
+      }
+
+      // Add methods to the element's public API
+      login(){
+        this.$.auth.signInAnonymously().catch((error)=> {
+        	this.dispatchEvent(new CustomEvent('negativeToast',{bubbles:true, composed:true, detail:error.message}))
+        }).then((user)=>{
+        	this.dispatchEvent(new CustomEvent('positiveToast',{bubbles:true, composed:true, detail:'Hola!'}))
+        });
+      }
+
+      logout(){
+         this.$.auth.signOut().catch((error)=>{
+          	this.dispatchEvent(new CustomEvent('negativeToast',{bubbles:true, composed:true, detail:error.message}))
+        }).then(()=>{
+        	this.dispatchEvent(new CustomEvent('positiveToast',{bubbles:true, composed:true, detail:'Tchau!'}))
+        })
+      }
+
+    }
+
+    // Register the x-custom element with the browser
+    customElements.define(AnonymousLogin.is, AnonymousLogin);
+  </script>
+
+</dom-module>
