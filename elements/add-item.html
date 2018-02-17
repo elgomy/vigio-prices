@@ -25,6 +25,14 @@
       --iron-icon-width:20px;     
       --iron-icon-height:20px; 
      }
+
+     vaadin-combo-box{
+      width: 20rem;
+     }
+
+     vaadin-text-field{
+      width: 20rem;
+     }
     </style>
 
     <!-- shadow DOM for your element -->
@@ -48,7 +56,7 @@
 
     <vaadin-dialog id="dialog">
       <template>
-        <add-product fbapp="[[fbapp]]" on-close-dialog="closeDialog"></add-product>
+        <add-product fbapp="[[fbapp]]" on-close-dialog="closeDialog" on-add-prod-combo="addProdCombo"></add-product>
       </template>
     </vaadin-dialog>
 
@@ -102,7 +110,7 @@
       enableField(){
         this.$.priceField.disabled = false;
       }
-
+      /*
       ready(){
           super.ready();
           let db = this.fbapp.firestore();
@@ -113,6 +121,27 @@
               this.push("products",doc.data().name)
             })
           });
+      }*/
+
+      ready(){
+          super.ready();
+          this.addListCombo();
+      }
+
+      addListCombo(){
+          let db = this.fbapp.firestore();
+          let collectRef = db.collection('products');
+          collectRef.get().then((snapshot)=>{
+            snapshot.forEach((doc)=>{
+             // console.log(doc.data().name);
+              this.push("products",doc.data().name)
+            })
+          });
+      }
+
+      addProdCombo(e){
+        console.log(e.detail);
+        this.push("products",e.detail.name)
       }
 
       addItem(){
