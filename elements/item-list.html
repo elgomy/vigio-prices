@@ -1,0 +1,59 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/vaadin-item/vaadin-item.html">
+<link rel="import" href="../bower_components/vaadin-list-box/vaadin-list-box.html">
+    
+<dom-module id="item-list">
+  <!-- Optional shadow DOM template -->
+  <template>
+    <style>
+      /* CSS rules for your element */
+    </style>
+	
+	<vaadin-list-box>
+    <template is="dom-repeat" items="[[products]]" as="product">
+    	<vaadin-item>[[product]]</vaadin-item>
+    </template>
+	</vaadin-list-box>
+    
+
+  </template>
+
+  <script>
+
+    // Define the element's API using an ES2015 class
+    class ItemList extends Polymer.Element {
+
+      static get is() { return 'item-list'; }
+
+      // Declare properties for the element's public API         
+      static get properties() {
+        return {
+          products: {
+            type: Array,
+            value(){
+            	return []
+            }
+          }
+        }
+      }
+
+      // Add methods to the element's public API
+      ready(){
+          super.ready();
+          let db = this.fbapp.firestore();
+          let collectRef = db.collection('products');
+          collectRef.get().then((snapshot)=>{
+            snapshot.forEach((doc)=>{
+              console.log(doc.data().name);
+              this.push("products",doc.data().name)
+            })
+          });
+      }
+
+    }
+
+    // Register the x-custom element with the browser
+    customElements.define(ItemList.is, ItemList);
+  </script>
+
+</dom-module>

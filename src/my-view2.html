@@ -10,7 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="shared-styles.html">
-<link rel="import" href="../elements/add-product.html">
+<link rel="import" href="../elements/item-list.html">
 
 <dom-module id="my-view2">
   <template>
@@ -23,13 +23,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <div class="card">
-   
+      <item-list fbapp="[[fbapp]]"></item-list>
     </div>
   </template>
 
   <script>
     class MyView2 extends Polymer.Element {
       static get is() { return 'my-view2'; }
+
+       static get properties() {
+        return {
+          fbapp:Object,
+
+        }
+      }
 
     }
 
