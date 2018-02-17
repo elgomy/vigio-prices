@@ -31,6 +31,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../elements/anonymous-login.html">
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-firestore-mixin.html">
 
 <dom-module id="my-app">
   <template>
@@ -73,6 +75,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
+      <firebase-app
+        auth-domain="vigio-prices.firebaseapp.com"
+        database-url="https://vigio-prices.firebaseio.com"
+        api-key="AIzaSyD6iGMqgnr0O6s7JtBBjRBfuAF6ynfbWIU"
+        storage-bucket="vigio-prices.appspot.com"
+        project-id="vigio-prices"
+        messaging-sender-id="397613272675"
+        name="prices-app"
+        app="{{fbapp}}">
+    </firebase-app>
+
     <app-location
         route="{{route}}"
         url-space-regex="^[[rootPath]]">
@@ -103,7 +116,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <app-toolbar>
             <paper-icon-button icon="my-icons:menu" drawer-toggle></paper-icon-button>
             <div main-title>My App</div>
-            <anonymous-login></anonymous-login>
+            <anonymous-login fbapp="{{fbapp}}"></anonymous-login>
           </app-toolbar>
         </app-header>
 
@@ -112,7 +125,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             attr-for-selected="name"
             fallback-selection="view404"
             role="main">
-          <my-view1 name="view1"></my-view1>
+          <my-view1 name="view1" fbapp="[[fbapp]]"></my-view1>
           <my-view2 name="view2"></my-view2>
           <my-view3 name="view3"></my-view3>
           <my-view404 name="view404"></my-view404>
@@ -141,6 +154,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           // This shouldn't be neccessary, but the Analyzer isn't picking up
           // Polymer.Element#rootPath
           rootPath: String,
+
+          // Added properties
+          fbapp: Object,
         };
       }
 
@@ -180,6 +196,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           super.ready();
           this.addEventListener('positiveToast', e => this._openPositiveToast(e));
           this.addEventListener('negativeToast', e => this._openNegativeToast(e));
+         
        
       }
       _openPositiveToast(e){
@@ -191,6 +208,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.$.negativeToast.open();
           this.$.negativeToast.text = e.detail
         }
+
+      test(){
+        console.log('ok!')
+      }
     }
 
     window.customElements.define(MyApp.is, MyApp);

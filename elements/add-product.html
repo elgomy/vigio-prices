@@ -1,0 +1,89 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/vaadin-text-field/vaadin-text-field.html">
+<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-text-field.html">
+<link rel="import" href="../bower_components/vaadin-button/vaadin-button.html">
+<link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-button.html">
+<link rel="import" href="../bower_components/vaadin-notification/vaadin-notification.html">
+   
+<dom-module id="add-product">
+  <!-- Optional shadow DOM template -->
+  <template>
+    <style>
+     :host{
+      
+     };
+     
+    </style>
+
+    <div>
+    <vaadin-text-field label="Cadastra o produto" id="product" placeholder="Produto"></vaadin-text-field>
+    </div>
+
+    <vaadin-button on-tap="addProd">OK</vaadin-button>
+
+    <vaadin-notification id="positiveNotif" position="middle" duration="2000">
+      <template>
+        <p>Produto cadastrado corretamente</p>
+      </template>
+    </vaadin-notification>
+
+      <vaadin-notification id="negativeNotif" position="middle" duration="2000">
+      <template>
+        <p>Ops! houve um erro</p>
+      </template>
+    </vaadin-notification>
+
+  </template>
+
+  <script>
+
+    // Define the element's API using an ES2015 class
+    class AddProduct extends Polymer.Element {
+
+      static get is() { return 'add-product'; }
+
+      // Declare properties for the element's public API         
+      static get properties() {
+        return {
+          fbapp: Object,
+          product: {
+            type: Object,
+            value(){
+            	return{
+            		name:''
+            	}
+            }
+          }
+        }
+      }
+
+      // Add methods to the element's public API
+      addProd(){
+            this.product = {
+              name: this.$.product.value
+            };
+            console.log(this.product);
+           
+            let db = this.fbapp.firestore();
+            let refProd = db.collection('products');
+            refProd.add(this.product)
+             .then(()=>{
+                this.$.positiveNotif.open();
+                this.dispatchEvent(new CustomEvent('close-dialog',{bubbles:true, composed:true}));
+                this.$.product.value = ''
+            })
+            .catch(function(error){
+              this.$.negativeNotif.open();
+              this.dispatchEvent(new CustomEvent('close-dialog',{bubbles:true, composed:true}));
+            });
+            ;
+          }
+
+
+    }
+
+    // Register the x-custom element with the browser
+    customElements.define(AddProduct.is, AddProduct);
+  </script>
+
+</dom-module>

@@ -1,5 +1,4 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/polymerfire/firebase-app.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../src/my-icons.html">
@@ -12,17 +11,6 @@
     </style>
 
     <!-- shadow DOM for your element -->
-
-   	<firebase-app
-  		auth-domain="vigio-prices.firebaseapp.com"
-  		database-url="https://vigio-prices.firebaseio.com"
-  		api-key="AIzaSyD6iGMqgnr0O6s7JtBBjRBfuAF6ynfbWIU"
-  		storage-bucket="vigio-prices.appspot.com"
-  		project-id="vigio-prices"
-  		messaging-sender-id="397613272675"
-  		name="prices-app"
-  		app="{{fbapp}}">
-	</firebase-app>
 
 	<firebase-auth 
         app-name="prices-app"
@@ -48,7 +36,10 @@
       // Declare properties for the element's public API         
       static get properties() {
         return {
-         
+          fbapp:Object,
+          user:Object,
+          signed:Boolean,
+          statusKnown:Boolean,
         }
       }
 
