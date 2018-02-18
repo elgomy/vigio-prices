@@ -9,6 +9,7 @@
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../src/my-icons.html">
 <link rel="import" href="add-product.html">
+<link rel="import" href="add-brand.html">
 
     
 <dom-module id="add-item">
@@ -39,24 +40,37 @@
 
    
     <div>
-    <vaadin-combo-box id="comboMarkets" label="Supermercado" placeholder="Seleciona" items="[[supermarket]]" on-selected-item-changed="enableCombo" required error-message="seleciona um supermercado"></vaadin-combo-box>
+      <vaadin-combo-box id="comboMarkets" label="Supermercado" placeholder="Seleciona" items="[[supermarket]]" on-selected-item-changed="enableComboProd" required error-message="seleciona um supermercado"></vaadin-combo-box>
     </div>
     <div>
-    <vaadin-combo-box id="comboProducts" label="Produto" placeholder="Seleciona" items="[[products]]" on-selected-item-changed="enableField" required error-message="seleciona um producto" disabled></vaadin-combo-box>
+      <vaadin-combo-box id="comboProducts" label="Produto" placeholder="Seleciona" items="[[products]]" on-selected-item-changed="enableComboBrand" required error-message="seleciona um producto" disabled></vaadin-combo-box>
     </div>
     <div>
-    <span>Não acha o produto?</span><iron-icon icon="my-icons:note-add" on-tap="openDialog"></iron-icon>
+      <span>Não acha o produto?</span><iron-icon icon="my-icons:note-add" on-tap="openProdDialog"></iron-icon>
+    </div>
+     <div>
+      <vaadin-combo-box id="comboBrands" label="Marca" placeholder="Seleciona" items="[[brands]]" on-selected-item-changed="enableField"
+       disabled></vaadin-combo-box>
     </div>
     <div>
-    <vaadin-text-field label="Preço" id="priceField" required pattern="^(([0-9]+(?:\.[0-9]+)?)|([0-9]*(?:\.[0-9]+)?))$" error-message="incluir um número válido (.)" placeholder="Digita" disabled></vaadin-text-field>
+      <span>Não acha o marca?</span><iron-icon icon="my-icons:note-add" on-tap="openBrandDialog"></iron-icon>
     </div>
     <div>
-    <vaadin-button on-tap="addItem">OK</vaadin-button>
+      <vaadin-text-field label="Preço" id="priceField" required pattern="^(([0-9]+(?:\.[0-9]+)?)|([0-9]*(?:\.[0-9]+)?))$" error-message="incluir um número válido (.)" placeholder="Digita" disabled></vaadin-text-field>
+    </div>
+    <div>
+      <vaadin-button on-tap="addItem">OK</vaadin-button>
     </div>
 
-    <vaadin-dialog id="dialog">
+    <vaadin-dialog id="prodDialog">
       <template>
-        <add-product fbapp="[[fbapp]]" on-close-dialog="closeDialog" on-add-prod-combo="addProdCombo"></add-product>
+        <add-product fbapp="[[fbapp]]" on-close-dialog="closeProdDialog"></add-product>
+      </template>
+    </vaadin-dialog>
+
+    <vaadin-dialog id="brandDialog">
+      <template>
+        <add-brand fbapp="[[fbapp]]" on-close-dialog="closeBrandDialog"></add-brand>
       </template>
     </vaadin-dialog>
 
@@ -85,11 +99,18 @@
               return[]
             }
           },
+          brands:{
+            type:Array,
+            value(){
+              return[]
+            }
+          },
           item:{
             type:Object,
             value(){
               return{
                 name:'',
+                brand:'',
                 price:'',
                 supermarket:'',
                 date:''
@@ -100,38 +121,29 @@
         }
       }
 
-      // Add methods to the element's public API
+      ready(){
+          super.ready();
+          this.addListProd();
+          this.addListBrand();
+      }
    
-
-      enableCombo(){
+      enableComboProd(){
         this.$.comboProducts.disabled = false;
+      }
+
+       enableComboBrand(){
+        this.$.comboBrands.disabled = false;
       }
 
       enableField(){
         this.$.priceField.disabled = false;
       }
-      /*
-      ready(){
-          super.ready();
+      
+      addListProd(){        
           let db = this.fbapp.firestore();
           let collectRef = db.collection('products');
-          collectRef.get().then((snapshot)=>{
-            snapshot.forEach((doc)=>{
-             // console.log(doc.data().name);
-              this.push("products",doc.data().name)
-            })
-          });
-      }*/
-
-      ready(){
-          super.ready();
-          this.addListCombo();
-      }
-
-      addListCombo(){
-          let db = this.fbapp.firestore();
-          let collectRef = db.collection('products');
-          collectRef.get().then((snapshot)=>{
+          collectRef.onSnapshot((snapshot)=>{         
+            this.set("products",[]); // we need to clear the array firstly
             snapshot.forEach((doc)=>{
              // console.log(doc.data().name);
               this.push("products",doc.data().name)
@@ -139,9 +151,16 @@
           });
       }
 
-      addProdCombo(e){
-        console.log(e.detail);
-        this.push("products",e.detail.name)
+      addListBrand(){        
+          let db = this.fbapp.firestore();
+          let collectRef = db.collection('brands');
+          collectRef.onSnapshot((snapshot)=>{
+            this.set("brands",[]); // we need to clear the array firstly
+            snapshot.forEach((doc)=>{
+             // console.log(doc.data().name);
+              this.push("brands",doc.data().name)
+            })
+          });
       }
 
       addItem(){
@@ -150,6 +169,7 @@
 
           this.item = {
               name: this.$.comboProducts.value,
+              brand: this.$.comboBrands.value,
               price: parseFloat(this.$.priceField.value),
               supermarket: this.$.comboMarkets.value,
               date: new Date()
@@ -172,17 +192,27 @@
           this.$.comboProducts.value = '';
           this.$.priceField.value = '';
           this.$.comboMarkets.value = '';
+          this.$.comboBrands.value = '';
           this.$.comboMarkets.autofocus = true;
           this.$.comboProducts.disabled = true;
+          this.$.comboBrands.disabled = true;
           this.$.priceField.disabled = true;
       }
 
-      openDialog(){
-          this.$.dialog.opened = true;
+      openProdDialog(){
+          this.$.prodDialog.opened = true;
       }
 
-      closeDialog(){
-          this.$.dialog.opened = false;
+      openBrandDialog(){
+          this.$.brandDialog.opened = true;
+      }
+
+      closeProdDialog(){
+          this.$.prodDialog.opened = false;
+      }
+
+      closeBrandDialog(){
+          this.$.brandDialog.opened = false;
       }
 
     }

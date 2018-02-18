@@ -40,9 +40,15 @@
       // Add methods to the element's public API
       ready(){
           super.ready();
+          this.addList();
+          
+      }
+
+      addList(){
           let db = this.fbapp.firestore();
           let collectRef = db.collection('products');
-          collectRef.get().then((snapshot)=>{
+          collectRef.onSnapshot((snapshot)=>{
+            this.set("products",[]); // we need to clear the array firstly
             snapshot.forEach((doc)=>{
               console.log(doc.data().name);
               this.push("products",doc.data().name)

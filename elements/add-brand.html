@@ -5,7 +5,7 @@
 <link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-button.html">
 <link rel="import" href="../bower_components/vaadin-notification/vaadin-notification.html">
    
-<dom-module id="add-product">
+<dom-module id="add-brand">
   <!-- Optional shadow DOM template -->
   <template>
     <style>
@@ -17,14 +17,14 @@
     </style>
 
     <div>
-    <vaadin-text-field label="Cadastra o produto" id="product" placeholder="Produto"></vaadin-text-field>
+    <vaadin-text-field label="Cadastra a marca" id="brand" placeholder="Marca"></vaadin-text-field>
     </div>
 
     <vaadin-button on-tap="addProd">OK</vaadin-button>
 
     <vaadin-notification id="positiveNotif" position="middle" duration="2000">
       <template>
-        <p>Produto cadastrado corretamente</p>
+        <p>Marca cadastrada corretamente</p>
       </template>
     </vaadin-notification>
 
@@ -39,15 +39,15 @@
   <script>
 
     // Define the element's API using an ES2015 class
-    class AddProduct extends Polymer.Element {
+    class AddBrand extends Polymer.Element {
 
-      static get is() { return 'add-product'; }
+      static get is() { return 'add-brand'; }
 
       // Declare properties for the element's public API         
       static get properties() {
         return {
           fbapp: Object,
-          product: {
+          brand: {
             type: Object,
             value(){
             	return{
@@ -60,18 +60,18 @@
 
       // Add methods to the element's public API
       addProd(){
-            this.product = {
-              name: this.$.product.value
+            this.brand = {
+              name: this.$.brand.value
             };
-            console.log(this.product);
+            console.log(this.brand);
            
             let db = this.fbapp.firestore();
-            let refProd = db.collection('products');
-            refProd.add(this.product)
+            let refProd = db.collection('brands');
+            refProd.add(this.brand)
              .then(()=>{
                 this.$.positiveNotif.open();
                 this.dispatchEvent(new CustomEvent('close-dialog',{bubbles:true, composed:true}));
-                this.$.product.value = ''
+                this.$.brand.value = ''
             })
             .catch(function(error){
               this.$.negativeNotif.open();
@@ -84,7 +84,7 @@
     }
 
     // Register the x-custom element with the browser
-    customElements.define(AddProduct.is, AddProduct);
+    customElements.define(AddBrand.is, AddBrand);
   </script>
 
 </dom-module>
