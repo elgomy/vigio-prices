@@ -10,6 +10,8 @@
 <link rel="import" href="../src/my-icons.html">
 <link rel="import" href="add-product.html">
 <link rel="import" href="add-brand.html">
+<link rel="import" href="../bower_components/iron-meta/iron-meta.html">
+
 
     
 <dom-module id="add-item">
@@ -37,7 +39,8 @@
     </style>
 
     <!-- shadow DOM for your element -->
-
+    
+    <iron-meta id="elmeta"></iron-meta>
    
     <div>
       <vaadin-combo-box id="comboMarkets" label="Supermercado" placeholder="Seleciona" items="[[supermarket]]" on-selected-item-changed="enableComboProd" required error-message="seleciona um supermercado"></vaadin-combo-box>
@@ -90,7 +93,7 @@
           supermarket:{
             type:Array,
             value(){
-              return ['Carrefour','Dia','Supernosso','VerdeMar']
+              return ['Carrefour','Dia','Epa','Supernosso','VerdeMar']
             }
           },
           products:{
@@ -118,11 +121,14 @@
             }
           },
           fbapp:Object,
+          fireService:Object,
         }
       }
 
       ready(){
           super.ready();
+          this.fireService = this.$.elmeta.byKey('shareService');
+          this.fbapp = this.fireService.fbapp;
           this.addListProd();
           this.addListBrand();
       }
@@ -172,12 +178,13 @@
               brand: this.$.comboBrands.value,
               price: parseFloat(this.$.priceField.value),
               supermarket: this.$.comboMarkets.value,
-              date: new Date()
+              date: new Date(),
+              formattedDate: new Date(Date.now()).toLocaleString().split(' ')[0],
           };
             console.log(this.item);
            
             let db = this.fbapp.firestore();
-            let refProd = db.collection(this.item.supermarket);
+            let refProd = db.collection(this.item.name);
             refProd.add(this.item)
              .then(()=>{
               this.dispatchEvent(new CustomEvent('positiveToast',{bubbles:true, composed:true, detail:'Item agregado'}))

@@ -1,6 +1,9 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/vaadin-item/vaadin-item.html">
 <link rel="import" href="../bower_components/vaadin-list-box/vaadin-list-box.html">
+<link rel="import" href="../bower_components/vaadin-dialog/vaadin-dialog.html">
+<link rel="import" href="item-dashboard.html">
+<link rel="import" href="../bower_components/iron-meta/iron-meta.html">
     
 <dom-module id="item-list">
   <!-- Optional shadow DOM template -->
@@ -8,12 +11,21 @@
     <style>
       /* CSS rules for your element */
     </style>
+
+    <iron-meta id="elmeta"></iron-meta>
 	
 	<vaadin-list-box>
     <template is="dom-repeat" items="[[products]]" as="product">
-    	<vaadin-item>[[product]]</vaadin-item>
+    	<vaadin-item on-tap="openDialog">[[product]]</vaadin-item>
     </template>
 	</vaadin-list-box>
+
+  <vaadin-dialog id="dialog">
+      <template>
+        
+        <item-dashboard fbapp="[[fbapp]]" selected="[[selected]]"></item-dashboard>
+      </template>
+  </vaadin-dialog>
     
 
   </template>
@@ -33,15 +45,20 @@
             value(){
             	return []
             }
-          }
+          },
+          // value assigned to the selected item when dialog is launched
+          selected:String,
+          fbapp:Object,
+          fireService:Object,
         }
       }
 
       // Add methods to the element's public API
       ready(){
           super.ready();
-          this.addList();
-          
+          this.fireService = this.$.elmeta.byKey('shareService');
+          this.fbapp = this.fireService.fbapp;
+          this.addList();        
       }
 
       addList(){
@@ -54,6 +71,12 @@
               this.push("products",doc.data().name)
             })
           });
+      }
+
+      openDialog(e){
+        this.$.dialog.opened = true;
+        this.selected = e.currentTarget.value;
+        console.log(e.currentTarget.value)
       }
 
     }

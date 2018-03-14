@@ -28,7 +28,8 @@
     "vaadin-dialog": "vaadin/vaadin-dialog#^1.0.1",
     "vaadin-notification": "vaadin/vaadin-notification#^1.0.0-beta1",
     "vaadin-item": "vaadin/vaadin-item#^2.0.0-beta1",
-    "vaadin-list-box": "vaadin/vaadin-list-box#^1.0.0-beta1"
+    "vaadin-list-box": "vaadin/vaadin-list-box#^1.0.0-beta1",
+    "iron-meta": "PolymerElements/iron-meta#^2.1.0"
   },
   "resolutions": {
     "polymer": "^2.0.0"

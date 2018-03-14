@@ -30,9 +30,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <!-- Added elements -->
 
 <link rel="import" href="../elements/anonymous-login.html">
+<link rel="import" href="../elements/firebase-meta.html">
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-app.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-firestore-mixin.html">
+<link rel="import" href="../bower_components/iron-meta/iron-meta.html">
 
 <dom-module id="my-app">
   <template>
@@ -75,6 +77,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
+    
+
+      <!--
       <firebase-app
         auth-domain="vigio-prices.firebaseapp.com"
         database-url="https://vigio-prices.firebaseio.com"
@@ -84,7 +89,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         messaging-sender-id="397613272675"
         name="prices-app"
         app="{{fbapp}}">
-    </firebase-app>
+    </firebase-app> -->
+
+    <firebase-meta></firebase-meta>
 
     <app-location
         route="{{route}}"
@@ -107,6 +114,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <a name="view2" href="[[rootPath]]view2">View Two</a>
           <a name="view3" href="[[rootPath]]view3">View Three</a>
         </iron-selector>
+
+        
       </app-drawer>
 
       <!-- Main content -->
@@ -125,8 +134,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             attr-for-selected="name"
             fallback-selection="view404"
             role="main">
-          <my-view1 name="view1" fbapp="[[fbapp]]"></my-view1>
-          <my-view2 name="view2" fbapp="[[fbapp]]"></my-view2>
+          <my-view1 name="view1"></my-view1>
+          <my-view2 name="view2"></my-view2>
           <my-view3 name="view3"></my-view3>
           <my-view404 name="view404"></my-view404>
         </iron-pages>
@@ -157,6 +166,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           // Added properties
           fbapp: Object,
+         
         };
       }
 

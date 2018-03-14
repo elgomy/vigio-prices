@@ -1,0 +1,194 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+    
+<dom-module id="item-dashboard">
+  <!-- Optional shadow DOM template -->
+  <template>
+    <style>
+      /* CSS rules for your element */
+    </style>
+
+    <!-- shadow DOM for your element -->
+    [[selected]]
+  
+
+ 
+
+  <div>
+      <template is="dom-if" if="[[carrefour.length]]">
+       <h3>Carrefour</h3> 
+        <template is="dom-repeat" items="[[carrefour]]" as="product">
+          <div>
+          [[product.formattedDate]]      
+          [[product.price]] 
+          [[product.brand]]
+          </div>        
+        </template>
+      </template>
+  </div>
+
+   <div>   
+     <template is="dom-if" if="[[dia.length]]">
+       <h3>Dia</h3> 
+        <template is="dom-repeat" items="[[dia]]" as="product">
+          <div>
+          [[product.formattedDate]]      
+          [[product.price]] 
+          [[product.brand]]
+          </div>       
+        </template>
+      </template>
+  </div>
+
+  <div>
+      <template is="dom-if" if="[[epa.length]]">
+       <h3>Epa</h3> 
+        <template is="dom-repeat" items="[[epa]]" as="product">
+          <div>
+          [[product.formattedDate]]      
+          [[product.price]] 
+          [[product.brand]]
+          </div>       
+        </template>
+      </template>
+  </div>
+
+  <div>
+      <template is="dom-if" if="[[supernosso.length]]">
+       <h3>Supernosso</h3> 
+        <template is="dom-repeat" items="[[supernosso]]" as="product">
+          <div>
+          [[product.formattedDate]]      
+          [[product.price]] 
+          [[product.brand]]
+          </div>       
+        </template>
+      </template>
+  </div>
+
+  <div>
+      <template is="dom-if" if="[[verdemar.length]]">
+       <h3>Verdemar</h3> 
+        <template is="dom-repeat" items="[[verdemar]]" as="product">
+          <div>
+          [[product.formattedDate]]      
+          [[product.price]] 
+          [[product.brand]]
+          </div>       
+        </template>
+      </template>
+  </div>
+
+
+  </template>
+
+  <script>
+
+    // Define the element's API using an ES2015 class
+    class ItemDashboard extends Polymer.Element {
+
+      static get is() { return 'item-dashboard'; }
+
+      // Declare properties for the element's public API         
+      static get properties() {
+        return {
+          fbapp: Object,
+
+     	  carrefour:{
+     	  	type:Array,
+     	  	value(){
+     	  		return[]
+     	  	}
+     	  },
+     	  epa:{
+     	  	type:Array,
+     	  	value(){
+     	  		return[]
+     	  	}
+     	  },
+     	  dia:{
+     	  	type:Array,
+     	  	value(){
+     	  		return[]
+     	  	}
+     	  },     
+     	  supernosso:{
+     	  	type:Array,
+     	  	value(){
+     	  		return[]
+     	  	}
+     	  },
+        verdemar:{
+          type:Array,
+          value(){
+            return[]
+          }
+        },
+        
+     	 
+        selected:{
+          type:String,
+          observer: 'selectedItem'
+        }
+
+        }
+      }
+
+     
+
+      selectedItem(newValue,oldValue){
+        console.log(newValue);
+        let db = this.fbapp.firestore();
+        let productRef = db.collection(newValue);
+
+          productRef.where("supermarket", "==", "Epa").onSnapshot((snapshot)=>{           
+            this.set("epa",[]); // we need to clear the array firstly
+            snapshot.forEach((doc)=>{         
+              this.push("epa",doc.data());
+            })
+          });
+
+          productRef.where("supermarket", "==", "Carrefour").onSnapshot((snapshot)=>{           
+            this.set("carrefour",[]); // we need to clear the array firstly
+            snapshot.forEach((doc)=>{       
+              this.push("carrefour",doc.data());         
+            })
+          });
+
+           productRef.where("supermarket", "==", "Dia").onSnapshot((snapshot)=>{           
+            this.set("dia",[]); // we need to clear the array firstly
+            snapshot.forEach((doc)=>{       
+              this.push("dia",doc.data());         
+            })
+          });
+
+           productRef.where("supermarket", "==", "Supernosso").onSnapshot((snapshot)=>{           
+            this.set("supernosso",[]); // we need to clear the array firstly
+            snapshot.forEach((doc)=>{       
+              this.push("supernosso",doc.data());         
+            })
+          });
+
+           productRef.where("supermarket", "==", "Verdemar").onSnapshot((snapshot)=>{           
+            this.set("verdemar",[]); // we need to clear the array firstly
+            snapshot.forEach((doc)=>{       
+              this.push("verdemar",doc.data());         
+            })
+          });
+
+        
+
+        
+
+       
+
+      }
+
+      
+
+    }
+
+    // Register the x-custom element with the browser
+    customElements.define(ItemDashboard.is, ItemDashboard);
+  </script>
+
+</dom-module>

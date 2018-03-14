@@ -1,0 +1,120 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
+<!-- MONO STATE PATTERN, alternativa al <iron-meta> -->
+
+<dom-module id="mono-state-pattern">
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding: 16px;
+      }
+      h3, p {
+        margin: 8px 0;
+      }
+    </style>
+    <h3>Usuario</h3>
+    <p>
+      {{user.name}}
+      <paper-button raised on-click="changeName">Cambiar Nombre</paper-button>
+    </p>
+  </template>
+
+  <script>
+
+  (function(){ // 2.incluyendo nuestra clase dentro de una función autoejecutable la escondemos del resto del mundo
+
+  	let userInstance = null; // 3. creamos una única instancia del componente, a la que tendrán acceso el resto de componentes
+
+    class MonoStatePattern extends Polymer.Element {
+      static get is() { return 'mono-state-pattern'; }
+
+      constructor() { // seteamos la referencia al componente a través de la variable 'optionsInstance' al constructor
+  		super();
+  		if (!userInstance) userInstance = this;
+		} 
+
+	 
+
+      static get properties() {
+        return {
+        	// 1.queremos hacer que esta propiedad esté accesible en todos los lugares de la aplicación, pero queremos controlar su acceso
+          user: {
+            type: Object,
+            value: () => ({
+              name: 'igor'
+            })
+          },
+
+        
+          // 4. el Subscriber será aquel que acceda a las propiedades que queramos compartir y los almacenaremos en un array. El subscriber será un objeto al que deveremos anexar como propiedades las propiedades a compartir: subscriber.user = this.user
+          subscribers: {
+  			type: Array,
+  			value: () => []
+			}
+        }
+      }
+      // notificamos al usuario si se modifica alguna subpropiedad del objeto user
+      static get observers() {
+  		return [
+    	'userChanged(user.*)',
+  		]
+	  }
+
+		userChanged(change) { // change puede ser true o false
+  			for(var i = 0; i < this.subscribers.length; i++) {
+    			this.subscribers[i].notifyPath(change.path);
+  			}
+		}
+      // el usuario se registra a las notificaciones
+       register(subscriber) {
+        this.push('subscribers',subscriber);
+  		//this.subscribers.push(subscriber); // lo añadimos al array 'subscribers'
+  		subscriber.user = this.user; // inicializamos su referencia local al objeto user
+      subscriber.notifyPath('user');
+		console.log(this.subscribers,subscriber.user)
+	  }
+
+	  	unregister(subscriber) {
+  		var i = this.subscribers.indexOf(subscriber);
+  		if (i > -1) this.subscribers.splice(i, 1)
+	  }
+
+	    changeName(){
+	    	this.set('user.name', 'pepe')
+	    }
+    }
+
+    // este mixin es la CLAVE del processo, siendo la puerta de entrada para otros componentes a la instancia de este componente. Aquel componente que quiera acceder a las propiedades de éste, extenderá este mixin.
+    MyTestMixin = (superClass) => {
+        return class extends superClass {
+          static get properties() {
+            return {
+              user: {
+                type: Object
+              }
+            }
+          }
+
+
+         // estas son las puertas de entrada de otros componentes a la instancia de este componente
+         // cuando el componente se agrega al DOM, se llama al método register() de la instancia de nuestro componente, pasándole como parámetro el componente externo (this). El componente remoto accederá (será registrado) a través de este Mixin
+          connectedCallback() {
+            super.connectedCallback();
+            userInstance.register(this);
+            console.log(this)
+          }
+
+          disconnectedCallback() {
+            super.disconnectedCallback();
+            userInstance.unregister(this);
+          }
+        }
+      }
+
+    window.customElements.define(MonoStatePattern.is, MonoStatePattern);
+
+})();
+  </script>
+</dom-module>
