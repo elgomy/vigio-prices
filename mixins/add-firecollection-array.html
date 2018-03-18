@@ -1,0 +1,27 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+    
+<script>
+
+	/**
+	* access Firebase firestore collection and push it to an array declared in our element
+	* @param {firecollection} the name of the firestore collection
+	* @param {array} the name of our element's array to push the collection
+	* @param {db} we need to receive de firestore database service, similar like this: let db = this.fbapp.firestore();
+	**/
+
+	AddFirecollectionArray = Polymer.dedupingMixin(function(superClass){
+		return class extends superClass{
+			addList(firecollection,array,db){
+          		let collectRef = db.collection(firecollection);
+          		collectRef.onSnapshot((snapshot)=>{
+            		this.set(array,[]); // we need to clear the array firstly
+            		snapshot.forEach((doc)=>{
+              			this.push(array,doc.data().name)
+            		})
+          		});
+			}
+		}
+	});
+
+
+</script>

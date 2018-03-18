@@ -11,6 +11,7 @@
 <link rel="import" href="add-product.html">
 <link rel="import" href="add-brand.html">
 <link rel="import" href="../bower_components/iron-meta/iron-meta.html">
+<link rel="import" href="../mixins/add-firecollection-array.html">
 
 
     
@@ -83,7 +84,7 @@
   <script>
 
     // Define the element's API using an ES2015 class
-    class AddItem extends Polymer.Element {
+    class AddItem extends AddFirecollectionArray(Polymer.Element) {
 
       static get is() { return 'add-item'; }
 
@@ -129,8 +130,9 @@
           super.ready();
           this.fireService = this.$.elmeta.byKey('shareService');
           this.fbapp = this.fireService.fbapp;
-          this.addListProd();
-          this.addListBrand();
+           let db = this.fbapp.firestore();
+          this.addList('products','products',db); 
+          this.addList('brands','brands',db); 
       }
    
       enableComboProd(){
@@ -145,29 +147,6 @@
         this.$.priceField.disabled = false;
       }
       
-      addListProd(){        
-          let db = this.fbapp.firestore();
-          let collectRef = db.collection('products');
-          collectRef.onSnapshot((snapshot)=>{         
-            this.set("products",[]); // we need to clear the array firstly
-            snapshot.forEach((doc)=>{
-             // console.log(doc.data().name);
-              this.push("products",doc.data().name)
-            })
-          });
-      }
-
-      addListBrand(){        
-          let db = this.fbapp.firestore();
-          let collectRef = db.collection('brands');
-          collectRef.onSnapshot((snapshot)=>{
-            this.set("brands",[]); // we need to clear the array firstly
-            snapshot.forEach((doc)=>{
-             // console.log(doc.data().name);
-              this.push("brands",doc.data().name)
-            })
-          });
-      }
 
       addItem(){
           if(this.$.priceField.invalid)

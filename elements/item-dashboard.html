@@ -1,4 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-meta/iron-meta.html">
+
     
 <dom-module id="item-dashboard">
   <!-- Optional shadow DOM template -->
@@ -7,12 +9,11 @@
       /* CSS rules for your element */
     </style>
 
+    <iron-meta id="elmeta"></iron-meta>
+
     <!-- shadow DOM for your element -->
-    [[selected]]
+    <h2>[[item]]</h2>
   
-
- 
-
   <div>
       <template is="dom-if" if="[[carrefour.length]]">
        <h3>Carrefour</h3> 
@@ -125,21 +126,30 @@
         },
         
      	 
-        selected:{
+        item:{
           type:String,
           observer: 'selectedItem'
-        }
+        },
+
+        fbapp:Object,
+        fireService:Object,
 
         }
       }
 
-     
+       ready(){
+          super.ready();
+          this.fireService = this.$.elmeta.byKey('shareService');
+          this.fbapp = this.fireService.fbapp;
+                
+      }
 
       selectedItem(newValue,oldValue){
         console.log(newValue);
         let db = this.fbapp.firestore();
         let productRef = db.collection(newValue);
 
+        
           productRef.where("supermarket", "==", "Epa").onSnapshot((snapshot)=>{           
             this.set("epa",[]); // we need to clear the array firstly
             snapshot.forEach((doc)=>{         
@@ -174,11 +184,6 @@
               this.push("verdemar",doc.data());         
             })
           });
-
-        
-
-        
-
        
 
       }

@@ -10,7 +10,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="shared-styles.html">
-<link rel="import" href="../elements/item-list.html">
+<link rel="import" href="../elements/item-admin.html">
+<link rel="import" href="../elements/item-dashboard.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
 
 <dom-module id="my-view2">
   <template>
@@ -23,7 +25,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <div class="card">
-      <item-list></item-list>
+      <item-admin></item-admin>
+
+       <app-route
+        route="{{route}}"
+        pattern="/:product"
+        data="{{data}}">
+    </app-route>
+
+   
+      <item-dashboard item="[[data.product]]"></item-dashboard>
     </div>
   </template>
 
@@ -33,7 +44,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
        static get properties() {
         return {
-          
+          route:Object,
+         data:Object,
 
         }
       }

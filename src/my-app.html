@@ -110,8 +110,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
         <app-toolbar>Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="view1" href="[[rootPath]]view1">View One</a>
-          <a name="view2" href="[[rootPath]]view2">View Two</a>
+          <a name="view1" href="[[rootPath]]view1">Cadastrar Produto</a>
+          <a name="view2" href="[[rootPath]]view2">Lista Produtos</a>
           <a name="view3" href="[[rootPath]]view3">View Three</a>
         </iron-selector>
 
@@ -135,8 +135,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             fallback-selection="view404"
             role="main">
           <my-view1 name="view1"></my-view1>
-          <my-view2 name="view2"></my-view2>
-          <my-view3 name="view3"></my-view3>
+          <my-view2 name="view2" route="{{subroute}}"></my-view2>
+          <my-view3 name="view3" route="{{subroute}}"></my-view3>
           <my-view404 name="view404"></my-view404>
         </iron-pages>
       </app-header-layout>
@@ -204,8 +204,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          // Added methods
       ready(){
           super.ready();
+          console.log(this.route);
           this.addEventListener('positiveToast', e => this._openPositiveToast(e));
           this.addEventListener('negativeToast', e => this._openNegativeToast(e));
+           this.addEventListener('navigate', e => this.navigate(e));
          
        
       }
@@ -219,9 +221,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.$.negativeToast.text = e.detail
         }
 
-      test(){
-        console.log('ok!')
-      }
+        navigate(e){
+          this.set('route.path', '/view2/' + e.detail.path)
+        }
+
     }
 
     window.customElements.define(MyApp.is, MyApp);

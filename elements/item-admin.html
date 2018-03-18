@@ -1,0 +1,43 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="item-list.html">
+<link rel="import" href="item-dashboard.html">
+    
+<dom-module id="item-admin">
+  <!-- Optional shadow DOM template -->
+  <template>
+    <style>
+      /* CSS rules for your element */
+    </style>
+
+    <!-- shadow DOM for your element -->
+		
+  		<item-list></item-list>
+  		<item-dashboard></item-dashboard>
+	
+  </template>
+
+  <script>
+
+    // Define the element's API using an ES2015 class
+    class ItemAdmin extends Polymer.Element {
+
+      static get is() { return 'item-admin'; }
+
+      // Declare properties for the element's public API         
+      static get properties() {
+        return {
+         
+        }
+      }
+
+      // Add methods to the element's public API
+    
+
+    }
+
+    // Register the x-custom element with the browser
+    customElements.define(ItemAdmin.is, ItemAdmin);
+  </script>
+
+</dom-module>

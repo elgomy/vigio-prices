@@ -11,6 +11,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="../elements/item-dashboard.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+
 
 <dom-module id="my-view3">
   <template>
@@ -22,8 +24,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
+     <app-route
+        route="{{route}}"
+        pattern="/:product"
+        data="{{data}}">
+    </app-route>
+
     <div class="card">
-      <item-dashboard fbapp="[[fbapp]]"></item-dashboard>
+      <item-dashboard item="[[data.product]]"></item-dashboard>
   </template>
 
   <script>
@@ -32,10 +40,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
        static get properties() {
         return {
-          fbapp:Object,
+         route:Object,
+         data:Object,
 
         }
       }
+
     }
 
     window.customElements.define(MyView3.is, MyView3);
