@@ -1,6 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 
- 
+<link rel="import" href="../bower_components/paper-button/paper-button.html"> 
 <link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
 <link rel="import" href="../bower_components/vaadin-valo-theme/vaadin-combo-box.html">
 <link rel="import" href="item-dashboard.html">
@@ -24,8 +24,15 @@
     <iron-meta id="elmeta"></iron-meta>
 
     <div>
-      <vaadin-combo-box id="comboProducts" label="Produto" placeholder="Seleciona" items="[[products]]" on-selected-item-changed="setItemRoute" required error-message="seleciona um producto"></vaadin-combo-box>
+      <vaadin-combo-box id="comboProducts" label="Produto" placeholder="Seleciona" items="[[products]]" value="[[item.name]]" selected-item="[[selectedItem]]"  on-selected-item-changed="setItemRoute" required error-message="seleciona um producto">
+        <template>
+          [[item.name]]
+        </template>
+        
+      </vaadin-combo-box>
     </div>  
+
+  
 
   </template>
 
@@ -60,11 +67,12 @@
           this.fbapp = this.fireService.fbapp;
           let db = this.fbapp.firestore();
           this.addList('products','products',db);   // add-firecollection-array
-
       }
 
-      setItemRoute(e){
-          this.selectedItem = e.currentTarget.value;     
+
+      setItemRoute(){      
+          this.selectedItem = this.$.comboProducts.selectedItem.name;   
+          console.log(this.selectedItem); 
           this.navigateTo(this.selectedItem); // navigate-mixin
       }
 

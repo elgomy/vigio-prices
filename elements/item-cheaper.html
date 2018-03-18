@@ -1,0 +1,62 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../mixins/add-firecollection-array.html">
+<link rel="import" href="../bower_components/iron-meta/iron-meta.html">
+    
+<dom-module id="item-cheaper">
+  <!-- Optional shadow DOM template -->
+  <template>
+    <style>
+      /* CSS rules for your element */
+    </style>
+
+    <!-- shadow DOM for your element -->
+
+    <iron-meta id="elmeta"></iron-meta>
+
+		
+    <template is="dom-repeat" items="[[products]]" as="product">
+    	<div>[[product.name]], [[product.price]]</div>
+    	
+    	
+    </template>
+
+  </template>
+
+  <script>
+
+    // Define the element's API using an ES2015 class
+    class ItemCheaper extends AddFirecollectionArray(Polymer.Element) {
+
+      static get is() { return 'item-cheaper'; }
+
+      // Declare properties for the element's public API         
+      static get properties() {
+        return {
+         products:{
+         	type:Array,
+         	value(){
+         		return[]
+         	}
+         },
+         fbapp:Object,
+         fireService:Object,
+        }
+      }
+
+       ready(){
+          super.ready();
+          this.fireService = this.$.elmeta.byKey('shareService');
+          this.fbapp = this.fireService.fbapp;
+          let db = this.fbapp.firestore();
+          this.addList('atum pedaços','products',db);   // add-firecollection-array
+          console.log(this.fbapp)
+      }
+    
+
+    }
+
+    // Register the x-custom element with the browser
+    customElements.define(ItemCheaper.is, ItemCheaper);
+  </script>
+
+</dom-module>
